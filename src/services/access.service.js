@@ -6,7 +6,10 @@ const crypto = require('node:crypto');
 const KeyTokenService = require('./keyToken.service');
 const { createTokenPair } = require('../auth/authUntils');
 const { getInfoData } = require('../utils/index');
-const { get } = require('lodash');
+const {
+  BadRequestError,
+  ConflictRequestError,
+} = require('../core/error.response');
 
 const RoleShop = {
   SHOP: 'SHOP',
@@ -17,26 +20,23 @@ const RoleShop = {
 
 class AccessService {
   static signUp = async ({ name, email, password }) => {
-    try {
-      //step1: check email exits?
-      const holderShop = await shopModel.findOne({ email }).lean();
-      if (holderShop) {
-        return {
-          code: 'xxxx',
-          message: 'Shop already exits registed!',
-        };
-      }
-      //step2: create new shop
-      const passwordHash = await bcrypt.hash(password, 10);
-      const newShop = await shopModel.create({
-        name,
-        email,
-        password: passwordHash,
-        roles: [RoleShop.SHOP],
-      });
-      if (newShop) {
-        //create privateKey, publicKey
-        /*
+    // try {
+    //step1: check email exits?
+    const holderShop = await shopModel.findOne({ email }).lean();
+    if (holderShop) {
+      throw new BadRequestError('Error: Shop already exists!');
+    }
+    //step2: create new shop
+    const passwordHash = await bcrypt.hash(password, 10);
+    const newShop = await shopModel.create({
+      name,
+      email,
+      password: passwordHash,
+      roles: [RoleShop.SHOP],
+    });
+    if (newShop) {
+      //create privateKey, publicKey
+      /*
         const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
           modulusLength: 4096,
           publicKeyEncoding: {
@@ -50,53 +50,50 @@ class AccessService {
         });
         */
 
-        const privateKey = crypto.randomBytes(64).toString('hex');
-        const publicKey = crypto.randomBytes(64).toString('hex');
-        console.log({ privateKey, publicKey });
+      const privateKey = crypto.randomBytes(64).toString('hex');
+      const publicKey = crypto.randomBytes(64).toString('hex');
+      console.log({ privateKey, publicKey });
 
-        const keyStore = await KeyTokenService.createKeyToken({
-          userId: newShop._id,
-          publicKey,
-          privateKey,
-        });
+      const keyStore = await KeyTokenService.createKeyToken({
+        userId: newShop._id,
+        publicKey,
+        privateKey,
+      });
 
-        if (!keyStore) {
-          return {
-            code: 'xxx',
-            message: 'Create publicKey failed!',
-          };
-        }
-
-        //create token pair
-        const tokens = await createTokenPair(
-          { userId: newShop._id, email },
-          publicKey,
-          privateKey,
-        );
-        console.log(`Create token susscees: `, tokens);
-
-        return {
-          code: 201,
-          metadata: {
-            shop: getInfoData({
-              fileds: ['_id', 'name', 'email'],
-              object: newShop,
-            }),
-            tokens,
-          },
-        };
+      if (!keyStore) {
+        throw new BadRequestError('Create publicKey failed!');
       }
+
+      //create token pair
+      const tokens = await createTokenPair(
+        { userId: newShop._id, email },
+        publicKey,
+        privateKey,
+      );
+      console.log(`Create token susscees: `, tokens);
+
       return {
-        code: 200,
-        metadata: null,
-      };
-    } catch (error) {
-      return {
-        code: 'xxx',
-        message: error.message,
-        static: 'error',
+        code: 201,
+        metadata: {
+          shop: getInfoData({
+            fileds: ['_id', 'name', 'email'],
+            object: newShop,
+          }),
+          tokens,
+        },
       };
     }
+    return {
+      code: 200,
+      metadata: null,
+    };
+    // } catch (error) {
+    //   return {
+    //     code: 'xxx',
+    //     message: error.message,
+    //     static: 'error',
+    //   };
+    // }
   };
 }
 
