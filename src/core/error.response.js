@@ -20,7 +20,7 @@ class ErrorResponse extends Error {
 class ConflictRequestError extends ErrorResponse {
   constructor(
     message = ReasonStatusCode.CONFLICT,
-    statusCode = StatusCode.FORBIDDEN,
+    statusCode = StatusCode.CONFLICT,
   ) {
     super(message, statusCode);
   }
@@ -28,7 +28,7 @@ class ConflictRequestError extends ErrorResponse {
 
 class BadRequestError extends ErrorResponse {
   constructor(
-    message = ReasonStatusCode.CONFLICT,
+    message = ReasonStatusCode.FORBIDDEN,
     statusCode = StatusCode.FORBIDDEN,
   ) {
     super(message, statusCode);
