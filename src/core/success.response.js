@@ -14,7 +14,7 @@ class SuccessResponse {
   constructor({
     message,
     statusCode = StatusCode.OK,
-    reasonStatusCode = reasonStatusCode.OK,
+    reasonStatusCode = ReasonStatusCode.OK,
     metadata = {},
   }) {
     this.message = !message ? reasonStatusCode : message;
@@ -45,4 +45,4 @@ class Created extends SuccessResponse {
   }
 }
 
-module.exports = { OK, Created };
+module.exports = { OK, Created, SuccessResponse };

@@ -8,7 +8,7 @@ const {
 const connectString = `mongodb://${user}:${password}@${host}:${port}/${name}?authSource=admin`;
 // console.log(connectString);
 
-const { countConnect } = require('../helper/check.connect');
+const { countConnect } = require('../helpers/check.connect');
 
 class Database {
   constructor() {

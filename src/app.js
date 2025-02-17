@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //init db
 require('./dbs/init.mongodb');
-const { checkOverload } = require('./helper/check.connect');
+const { checkOverload } = require('./helpers/check.connect');
 // checkOverload();
 
 //int routes
@@ -32,6 +32,7 @@ app.use((error, req, res, next) => {
   return res.status(statusCode).json({
     status: 'error',
     code: statusCode,
+    stack: error.stack,
     message: error.message || 'Internal Server Error',
   });
 });
