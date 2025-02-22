@@ -15,6 +15,16 @@ class ProductController {
     }).send(res);
   };
 
+  publishProductByShop = async (req, res, next) => {
+    new SuccessResponse({
+      message: 'Publish product success',
+      metadata: await ProductService.publishProductByShop({
+        product_shop: req.user.userId,
+        product_id: req.params.id,
+      }),
+    }).send(res);
+  };
+
   //QUERY//
   /**
    * @desc Get all Draft for shop
@@ -30,7 +40,16 @@ class ProductController {
       }),
     }).send(res);
   };
-  //END  QUERY//
+
+  getAllPublishForShop = async (req, res, next) => {
+    new SuccessResponse({
+      message: 'Get list Publish success!',
+      metadata: await ProductService.findAllPublishForShop({
+        product_shop: req.user.userId,
+      }),
+    }).send(res);
+  };
+  //ENDQUERY//
 }
 
 module.exports = new ProductController();
