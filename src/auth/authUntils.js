@@ -63,7 +63,6 @@ const authenticationV2 = asyncHandler(async (req, res, next) => {
   if (req.headers[HEADER.REFRESH_TOKEN]) {
     try {
       const refreshToken = req.headers[HEADER.REFRESH_TOKEN];
-      console.log('dasdsd', refreshToken);
       const decodeUser = JWT.verify(refreshToken, keyStore.privateKey);
       if (userId !== decodeUser.userId)
         throw new AuthFailureError('Invalid user');
@@ -76,6 +75,7 @@ const authenticationV2 = asyncHandler(async (req, res, next) => {
     }
   }
 
+  //4
   const accessToken = req.headers[HEADER.AUTHORIZATION];
   if (!accessToken) throw new AuthFailureError('Invalid request');
 
@@ -84,6 +84,7 @@ const authenticationV2 = asyncHandler(async (req, res, next) => {
     if (userId !== decodeUser.userId)
       throw new AuthFailureError('Invalid user');
     req.keyStore = keyStore;
+    req.user = decodeUser;
     return next();
   } catch (error) {
     throw error;

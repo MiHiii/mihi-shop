@@ -15,7 +15,7 @@ class Database {
     this.connect();
   }
 
-  //connect to the database
+  //connect to the database jf
   connect(type = 'mongodb') {
     if (1 === 1) {
       mongoose.set('debug', true);
