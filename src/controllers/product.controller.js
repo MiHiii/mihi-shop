@@ -4,8 +4,6 @@ const { SuccessResponse } = require('../core/success.response');
 
 class ProductController {
   createProduct = async (req, res, next) => {
-    // console.log(req.user);
-
     new SuccessResponse({
       message: 'Create product success',
       metadata: await ProductService.createProduct(req.body.product_type, {
@@ -15,10 +13,36 @@ class ProductController {
     }).send(res);
   };
 
+  //update product
+  updateProduct = async (req, res, next) => {
+    new SuccessResponse({
+      message: 'Update product success',
+      metadata: await ProductService.updateProduct(
+        req.body.product_type,
+        req.params.productId,
+        {
+          ...req.body,
+          product_shop: req.user.userId,
+        },
+      ),
+    }).send(res);
+  };
+
+  ////////
   publishProductByShop = async (req, res, next) => {
     new SuccessResponse({
       message: 'Publish product success',
       metadata: await ProductService.publishProductByShop({
+        product_shop: req.user.userId,
+        product_id: req.params.id,
+      }),
+    }).send(res);
+  };
+
+  unPublishProductByShop = async (req, res, next) => {
+    new SuccessResponse({
+      message: 'Unpublish product success',
+      metadata: await ProductService.unPublishProductByShop({
         product_shop: req.user.userId,
         product_id: req.params.id,
       }),
@@ -49,6 +73,30 @@ class ProductController {
       }),
     }).send(res);
   };
+
+  getListSearchProduct = async (req, res, next) => {
+    new SuccessResponse({
+      message: 'Get list search product success!',
+      metadata: await ProductService.searchProducts(req.params),
+    }).send(res);
+  };
+
+  getAllProducts = async (req, res, next) => {
+    new SuccessResponse({
+      message: 'Get list product success!',
+      metadata: await ProductService.findAllProducts(req.query),
+    }).send(res);
+  };
+
+  getDetailProduct = async (req, res, next) => {
+    new SuccessResponse({
+      message: 'Get detail product success!',
+      metadata: await ProductService.findProduct({
+        product_id: req.params.product_id,
+      }),
+    }).send(res);
+  };
+
   //ENDQUERY//
 }
 

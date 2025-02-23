@@ -6,7 +6,7 @@ const slugify = require('slugify');
 const DOCUMENT_NAME = 'Product';
 const COLLECTION_NAME = 'Products';
 
-const productShcema = new Schema(
+const productSchema = new Schema(
   {
     product_name: { type: String, required: true },
     product_thumb: { type: String, required: true },
@@ -40,8 +40,11 @@ const productShcema = new Schema(
   },
 );
 
+//Create index for search
+productSchema.index({ product_name: 'text', product_description: 'text' });
+
 //Document middleware runs before .save() and .create()...
-productShcema.pre('save', function (next) {
+productSchema.pre('save', function (next) {
   this.product_slug = slugify(this.product_name, { lower: true });
   next();
 });
@@ -90,7 +93,7 @@ const furnitureSchema = new Schema(
 );
 
 module.exports = {
-  product: model(DOCUMENT_NAME, productShcema),
+  product: model(DOCUMENT_NAME, productSchema),
   clothing: model('Clothing', clothingSchema),
   electronic: model('Electronics', electronicSchema),
   furniture: model('Furnitures', furnitureSchema),
