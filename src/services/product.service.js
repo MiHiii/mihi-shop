@@ -119,10 +119,10 @@ class Product {
 
   //create product
   async createProduct(product_id) {
-    console.log('product_id received:', product_id); // Debug
+    // console.log('product_id received:', product_id); // Debug
     const newProduct = await product.create({ ...this, _id: product_id });
     if (newProduct) {
-      console.log('newProduct._id:', newProduct._id); // Debug
+      // console.log('newProduct._id:', newProduct._id); // Debug
       await createInventory({
         productId: newProduct._id,
         shopId: this.product_shop,

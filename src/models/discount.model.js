@@ -27,7 +27,7 @@ var apiKeySchema = new Schema(
       required: true,
       enum: ['all', 'specific'],
     }, // all, specific_products
-    discount_product_id: { type: Array, default: [] }, //mảng chứa id của product
+    discount_product_ids: { type: Array, default: [] }, //mảng chứa id của product
   },
   {
     timestamps: true,
